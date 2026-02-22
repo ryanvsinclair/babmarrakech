@@ -1010,14 +1010,9 @@ export default function Home() {
               Reserve via OpenTable
             </p>
             {/* This is where you'd embed the actual OpenTable widget */}
-            <div className="bg-white/10 rounded-xl p-6 mb-4">
-              <p className="text-white/70 text-sm">
-                OpenTable reservation widget will appear here.
-                <br />
-                <span className="text-white/40 text-xs">
-                  (Embed your OpenTable widget code to enable direct
-                  reservations)
-                </span>
+            <div className="bg-white/10 rounded-xl p-8 mb-4 flex items-center justify-center">
+              <p className="text-white/80 text-xl font-medium">
+                OpenTable Coming Soon
               </p>
             </div>
             <p className="text-white/40 text-xs">
