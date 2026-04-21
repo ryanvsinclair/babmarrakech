@@ -69,8 +69,6 @@ export async function GET() {
 
     return NextResponse.json({
       reviews,
-      overallRating: data.rating ?? null,
-      totalReviews: data.userRatingCount ?? null,
     });
   } catch (err) {
     console.error("Error fetching Google reviews:", err);

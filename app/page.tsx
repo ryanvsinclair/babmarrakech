@@ -1,71 +1,21 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { SiteHeader } from "./components/site-header";
+import { siteNavLinks } from "./navigation";
 
 /* ══════════════════════════════════════════
    DATA
    ══════════════════════════════════════════ */
 
-const NAV_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Hours", href: "#hours" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "Find Us", href: "#map" },
-];
-
 const HOURS = [
   { day: "Monday", time: "Closed", closed: true },
-  { day: "Tuesday", time: "10:00 AM – 9:00 PM" },
-  { day: "Wednesday", time: "10:00 AM – 9:00 PM" },
-  { day: "Thursday", time: "10:00 AM – 9:00 PM" },
-  { day: "Friday", time: "10:00 AM – 9:00 PM" },
-  { day: "Saturday", time: "10:00 AM – 9:00 PM" },
-  { day: "Sunday", time: "10:00 AM – 9:00 PM" },
-];
-
-const MENU_ITEMS = [
-  {
-    name: "Lamb Tagine",
-    desc: "Slow-cooked lamb with prunes, almonds & saffron in a traditional clay pot",
-    price: "$24",
-    category: "Tagines",
-    img: "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?w=600&q=80",
-  },
-  {
-    name: "Royal Couscous",
-    desc: "Fluffy semolina with seven vegetables, tender meat & aromatic broth",
-    price: "$22",
-    category: "Couscous",
-    img: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80",
-  },
-  {
-    name: "Chicken Bastilla",
-    desc: "Flaky pastry filled with spiced chicken, almonds, dusted with cinnamon",
-    price: "$18",
-    category: "Starters",
-    img: "https://images.unsplash.com/photo-1511690743698-d9d18f7e20f1?w=600&q=80",
-  },
-  {
-    name: "Kefta Tagine",
-    desc: "Spiced meatballs in rich tomato-cumin sauce with a poached egg",
-    price: "$20",
-    category: "Tagines",
-    img: "https://images.unsplash.com/photo-1547424850-28ac9a1da4d2?w=600&q=80",
-  },
-  {
-    name: "Moroccan Mint Tea",
-    desc: "Traditional gunpowder green tea with fresh spearmint & sugar",
-    price: "$5",
-    category: "Drinks",
-    img: "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=600&q=80",
-  },
-  {
-    name: "Moroccan Sandwich",
-    desc: "House-made khobz bread with spiced proteins, harissa & preserved lemons",
-    price: "$14",
-    category: "Sandwiches",
-    img: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80",
-  },
+  { day: "Tuesday", time: "Closed", closed: true },
+  { day: "Wednesday", time: "2:00 PM – 8:00 PM" },
+  { day: "Thursday", time: "2:00 PM – 8:00 PM" },
+  { day: "Friday", time: "2:00 PM – 8:00 PM" },
+  { day: "Saturday", time: "2:00 PM – 8:00 PM" },
+  { day: "Sunday", time: "2:00 PM – 8:00 PM" },
 ];
 
 const FALLBACK_REVIEWS = [
@@ -167,21 +117,6 @@ const ChevronRight = () => (
   </svg>
 );
 
-const MenuIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <line x1="3" y1="6" x2="21" y2="6" />
-    <line x1="3" y1="12" x2="21" y2="12" />
-    <line x1="3" y1="18" x2="21" y2="18" />
-  </svg>
-);
-
-const CloseIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>
-);
-
 /* ══════════════════════════════════════════
    HELPER: get today's day name
    ══════════════════════════════════════════ */
@@ -193,19 +128,11 @@ function getTodayName() {
    MAIN PAGE
    ══════════════════════════════════════════ */
 export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
   const [reviews, setReviews] = useState(FALLBACK_REVIEWS);
-  const [overallRating, setOverallRating] = useState<number | null>(5.0);
-  const [totalReviews, setTotalReviews] = useState<number | null>(84);
+  const [overallRating, setOverallRating] = useState<number | null>(4.9);
+  const [totalReviews, setTotalReviews] = useState<number | null>(207);
   const today = getTodayName();
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Fetch live Google reviews
   useEffect(() => {
@@ -242,94 +169,7 @@ export default function Home() {
   return (
     <>
       {/* ────────── NAVBAR ────────── */}
-      <nav
-        id="navbar"
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-brown-deep/95 backdrop-blur-md shadow-lg py-3"
-            : "bg-transparent py-5"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2 group">
-            <span className="font-serif text-2xl text-white tracking-wide">
-              Bab <span className="text-gold font-bold">Marrakech</span>
-            </span>
-          </a>
-
-          {/* Desktop Links */}
-          <div className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-white/80 hover:text-gold transition-colors tracking-wide uppercase"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center gap-5">
-            <a
-              href="tel:3433220322"
-              className="flex items-center gap-2 text-sm text-white/80 hover:text-gold transition-colors"
-            >
-              <PhoneIcon />
-              (343) 322-0322
-            </a>
-            <a
-              href="#reserve"
-              className="px-6 py-2.5 bg-gold text-white text-sm font-semibold rounded-full hover:bg-gold-light transition-all duration-300 hover:scale-105 shadow-lg shadow-gold/30"
-            >
-              Book a Table
-            </a>
-          </div>
-
-          {/* Mobile menu toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-white p-2"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
-          </button>
-        </div>
-
-        {/* Mobile menu panel */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-brown-deep/98 backdrop-blur-xl border-t border-white/10 animate-fade-in">
-            <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-4">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-lg text-white/90 hover:text-gold transition-colors py-2 border-b border-white/5"
-                >
-                  {link.label}
-                </a>
-              ))}
-              <a
-                href="tel:3433220322"
-                className="flex items-center gap-2 text-white/80 hover:text-gold transition-colors py-2"
-              >
-                <PhoneIcon />
-                (343) 322-0322
-              </a>
-              <a
-                href="#reserve"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mt-2 px-6 py-3 bg-gold text-white text-center font-semibold rounded-full hover:bg-gold-light transition-all"
-              >
-                Book a Table
-              </a>
-            </div>
-          </div>
-        )}
-      </nav>
+      <SiteHeader transparentOnTop />
 
       {/* ────────── HERO ────────── */}
       <section
@@ -376,7 +216,7 @@ export default function Home() {
           <div className="animate-fade-in-up opacity-0 delay-400 flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-10 text-sm text-white/70">
             <span className="flex items-center gap-2">
               <ClockIcon />
-              Tue–Sun: 10 AM – 9 PM
+              Wed–Sun: 2 PM – 8 PM
             </span>
             <span className="hidden sm:block w-1 h-1 rounded-full bg-gold" />
             <span className="flex items-center gap-2">
@@ -399,7 +239,7 @@ export default function Home() {
               Reserve a Table
             </a>
             <a
-              href="#menu"
+              href="/menu"
               className="px-8 py-3.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-gold hover:text-gold transition-all duration-300 text-base"
             >
               View Menu
@@ -799,7 +639,7 @@ export default function Home() {
               <span className="text-gold-gradient">Guests Say</span>
             </h2>
             <p className="text-text-body max-w-xl mx-auto">
-              Reviews from OpenTable diners and Google — {totalReviews}+ verified reviews
+              Based on {totalReviews}+ verified Google reviews
             </p>
 
             {/* Overall rating */}
@@ -813,7 +653,7 @@ export default function Home() {
                 {overallRating?.toFixed(1) ?? "5.0"} <span className="text-base font-normal text-text-body">out of 5</span>
               </p>
               <p className="text-sm text-text-light flex items-center gap-1">
-                <MapPinIcon /> Based on {totalReviews} Google &amp; OpenTable Reviews
+                <MapPinIcon /> Based on {totalReviews} Google Reviews
               </p>
             </div>
           </div>
@@ -947,7 +787,7 @@ export default function Home() {
                   d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                 />
               </svg>
-              All reviews are from verified Google &amp; OpenTable users
+              All reviews are from verified Google users
             </div>
           </div>
 
@@ -1108,7 +948,7 @@ export default function Home() {
                 Quick Links
               </h4>
               <ul className="space-y-3">
-                {NAV_LINKS.map((link) => (
+                {siteNavLinks.map((link) => (
                   <li key={link.href}>
                     <a
                       href={link.href}
