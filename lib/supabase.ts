@@ -5,6 +5,13 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+export type SiteNotice = {
+  id: number;
+  message: string;
+  active: boolean;
+  updated_at: string;
+};
+
 export type Reservation = {
   id: string;
   name: string;

@@ -138,9 +138,6 @@ export default function ReservationsPage() {
               <strong>{new Date(form.date + "T12:00:00").toLocaleDateString("en-CA", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</strong>{" "}
               at <strong>{formatTime(form.time)}</strong>.
             </p>
-            <p className="text-text-body mb-8">
-              A confirmation will be sent to <strong>{form.email}</strong>.
-            </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => { setSuccess(false); setForm({ name: "", email: "", phone: "", party_size: "2", date: "", time: "", allergies: "" }); }}

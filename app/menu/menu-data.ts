@@ -27,59 +27,95 @@ export const featuredItems: FeaturedItem[] = [
     price: "$13",
     description:
       "Savory chicken pie made with crispy, flaky phyllo dough and a tender shredded chicken filling.",
-    image: "/food2.png",
+    image: "/images/bastilla.jpeg",
   },
   {
-    name: "Chicken Tajine",
-    price: "$27",
+    name: "Lamb Shank Tajine",
+    price: "$30",
     description:
-      "Traditional North African chicken stew, slow-cooked in an earthenware pot with rich spices.",
-    image: "/food1.png",
+      "Slow-braised lamb shank in a rich, spiced broth — cooked low and slow in a traditional earthenware pot until fall-off-the-bone tender.",
+    image: "/images/lamb tajine.jpeg",
   },
   {
-    name: "M'kila Khlea & Egg",
-    price: "$14",
+    name: "Vegetarian Couscous",
+    price: "$25",
     description:
-      "Authentic smoked meat cooked with olive oil and beef fat, finished with eggs.",
-    image: "/food3.png",
+      "Fluffy steamed semolina served with a medley of slow-cooked seasonal vegetables in a fragrant Moroccan broth.",
+    image: "/images/veg couscous.jpeg",
+  },
+];
+
+/* ── Available Now (limited menu through April 28th) ── */
+export const availableNowSections: MenuSection[] = [
+  {
+    id: "tajine",
+    label: "Slow Cooked",
+    title: "Tajine",
+    description:
+      "Traditional North African dish, known for rich flavors and slow-cooked stews prepared in a distinctive earthenware pot.",
+    items: [
+      {
+        name: "Lamb Shank",
+        price: "$30",
+      },
+      {
+        name: "Beef",
+        price: "$29",
+      },
+      {
+        name: "Chicken",
+        price: "$27",
+      },
+    ],
+  },
+  {
+    id: "couscous",
+    label: "Classic",
+    title: "Couscous",
+    description:
+      "Steamed semolina wheat served with vegetables and your choice of meat.",
+    items: [
+      {
+        name: "Vegetarian",
+        price: "$25",
+      },
+      {
+        name: "Chicken",
+        price: "$28",
+      },
+      {
+        name: "Beef",
+        price: "$30",
+      },
+      {
+        name: "Lamb",
+        price: "$32",
+      },
+    ],
+  },
+  {
+    id: "bastilla",
+    label: "Pastry",
+    title: "Bastilla",
+    description: "Savory Moroccan pies wrapped in crisp, flaky pastry.",
+    items: [
+      {
+        name: "Chicken",
+        price: "$13",
+        description:
+          "Savory chicken pie made with crispy, flaky phyllo dough and a tender shredded chicken filling.",
+      },
+      {
+        name: "Seafood",
+        price: "$15",
+        description:
+          "Savory pie filled with shrimp, calamari, and fish tossed with a zesty vermicelli filling.",
+      },
+    ],
   },
 ];
 
 export const menuSections: MenuSection[] = [
-  {
-    id: "specials",
-    label: "Front Page",
-    title: "Specials",
-    description: "House specials and limited-time plates from the front of the menu.",
-    items: [
-      {
-        name: "Ramadan Special",
-        price: "$18",
-        description:
-          "Includes harira, bread, boiled egg, 3 dates, 1 sweet, and an appetizer trio.",
-      },
-      {
-        name: "Knintat",
-        price: "$15",
-        description: "Pick any 3 fillings.",
-        options: [
-          "Seafood",
-          "Chicken",
-          "Potato & cheese",
-          "3 cheeses",
-          "Cheese & zaatar",
-          "Spinach",
-          "Ground beef",
-          "Liver",
-        ],
-      },
-      {
-        name: "Limited-Time Msemen",
-        price: "$5 each",
-        options: ["Chahma (lamb)", "Khlea (preserved meat)"],
-      },
-    ],
-  },
   {
     id: "mkila",
     label: "Breakfast",
@@ -154,26 +190,6 @@ export const menuSections: MenuSection[] = [
         name: "Taktouka",
         price: "$7",
         description: "Roasted green pepper in tomato sauce.",
-      },
-    ],
-  },
-  {
-    id: "bastilla",
-    label: "Pastry",
-    title: "Bastilla",
-    description: "Savory Moroccan pies wrapped in crisp, flaky pastry.",
-    items: [
-      {
-        name: "Chicken",
-        price: "$13",
-        description:
-          "Savory chicken pie made with crispy, flaky phyllo dough and a tender shredded chicken filling.",
-      },
-      {
-        name: "Seafood",
-        price: "$15",
-        description:
-          "Savory pie filled with shrimp, calamari, and fish tossed with a zesty vermicelli filling.",
       },
     ],
   },
@@ -271,43 +287,6 @@ export const menuSections: MenuSection[] = [
     ],
   },
   {
-    id: "tajine",
-    label: "Slow Cooked",
-    title: "Tajine",
-    description:
-      "Traditional North African dish, known for rich flavors and slow-cooked stews prepared in a distinctive earthenware pot.",
-    items: [
-      {
-        name: "Lamb Chunks",
-        price: "$30",
-      },
-      {
-        name: "Beef",
-        price: "$29",
-      },
-      {
-        name: "Chicken",
-        price: "$27",
-      },
-      {
-        name: "Kefta (Ground Beef)",
-        price: "$25",
-      },
-      {
-        name: "Kariin (Lamb Trotters)",
-        price: "$28",
-      },
-      {
-        name: "Shrimp",
-        price: "$27",
-      },
-      {
-        name: "Vegetarian",
-        price: "$25",
-      },
-    ],
-  },
-  {
     id: "rfissa",
     label: "Signature",
     title: "Rfissa",
@@ -318,31 +297,6 @@ export const menuSections: MenuSection[] = [
         price: "$29",
         description:
           "Stewed chicken, lentils, and onions served on a bed of shredded mesemen with fragrantly seasoned broth poured over top.",
-      },
-    ],
-  },
-  {
-    id: "couscous",
-    label: "Classic",
-    title: "Couscous",
-    description:
-      "Steamed semolina wheat served with vegetables and your choice of meat.",
-    items: [
-      {
-        name: "Vegetarian",
-        price: "$25",
-      },
-      {
-        name: "Chicken",
-        price: "$28",
-      },
-      {
-        name: "Beef",
-        price: "$30",
-      },
-      {
-        name: "Lamb",
-        price: "$32",
       },
     ],
   },
@@ -359,7 +313,6 @@ export const menuSections: MenuSection[] = [
       {
         name: "Pomegranate Yogurt",
         price: "$6 - $10",
-        note: "Price range shown as listed on the menu PDF.",
       },
       {
         name: "The Bab Marrakech (Zaa'Zaa)",

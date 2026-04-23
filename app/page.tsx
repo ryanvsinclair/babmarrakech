@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { SiteHeader } from "./components/site-header";
 import { siteNavLinks } from "./navigation";
+import { supabase, type SiteNotice } from "@/lib/supabase";
 
 /* ══════════════════════════════════════════
    DATA
@@ -128,6 +129,15 @@ function getTodayName() {
    MAIN PAGE
    ══════════════════════════════════════════ */
 export default function Home() {
+  const [notice, setNotice] = useState<SiteNotice | null>(null);
+  const [noticeDismissed, setNoticeDismissed] = useState(false);
+
+  useEffect(() => {
+    supabase.from("site_notices").select("*").eq("id", 1).eq("active", true).single().then(({ data }) => {
+      if (data) setNotice(data as SiteNotice);
+    });
+  }, []);
+
   const [reviewIndex, setReviewIndex] = useState(0);
   const [reviews, setReviews] = useState(FALLBACK_REVIEWS);
   const [overallRating, setOverallRating] = useState<number | null>(4.9);
@@ -168,6 +178,31 @@ export default function Home() {
 
   return (
     <>
+      {/* ────────── SITE NOTICE POPUP ────────── */}
+      {notice && !noticeDismissed && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center px-4" onClick={() => setNoticeDismissed(true)}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-md" />
+          <div
+            className="relative w-full max-w-sm rounded-3xl border border-white/20 bg-white/15 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.35)] p-7 flex flex-col items-center text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/20 border border-white/30">
+              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
+            </div>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/60 mb-2">Notice</p>
+            <p className="text-white text-sm leading-6">{notice.message}</p>
+            <button
+              onClick={() => setNoticeDismissed(true)}
+              className="mt-6 w-full py-3 bg-white/20 hover:bg-white/30 border border-white/25 text-white font-semibold rounded-full backdrop-blur-sm transition-all"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ────────── NAVBAR ────────── */}
       <SiteHeader transparentOnTop />
 
@@ -844,44 +879,26 @@ export default function Home() {
             the vibrant streets of Marrakech
           </p>
 
-          {/* OpenTable widget placeholder */}
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 mb-8">
-            <p className="text-white/50 text-sm mb-4 uppercase tracking-wider">
-              Reserve via OpenTable
-            </p>
-            {/* This is where you'd embed the actual OpenTable widget */}
-            <div className="bg-white/10 rounded-xl p-8 mb-4 flex items-center justify-center">
-              <p className="text-white/80 text-xl font-medium">
-                OpenTable Coming Soon
-              </p>
-            </div>
-            <p className="text-white/40 text-xs">
-              Or call us directly at{" "}
-              <a
-                href="tel:3433220322"
-                className="text-gold hover:text-gold-light transition-colors"
-              >
-                (343) 322-0322
-              </a>
-            </p>
-          </div>
+          <a
+            href="/reservations"
+            className="inline-flex items-center gap-3 px-10 py-4 bg-gold text-white font-semibold rounded-full text-lg hover:bg-gold-light transition-all duration-300 hover:scale-105 shadow-xl shadow-gold/30 mb-6"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Book a Table
+          </a>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="tel:3433220322"
-              className="px-8 py-3.5 bg-gold text-white font-semibold rounded-full hover:bg-gold-light transition-all duration-300 hover:scale-105 shadow-xl shadow-gold/30 flex items-center gap-2"
-            >
-              <PhoneIcon />
-              Call to Reserve
+          <p className="text-white/35 text-sm">
+            Have a question?{" "}
+            <a href="tel:3433220322" className="text-white/55 hover:text-gold transition-colors">
+              Call us
             </a>
-            <a
-              href="mailto:hello@babmarakech.ca"
-              className="px-8 py-3.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-gold hover:text-gold transition-all duration-300 flex items-center gap-2"
-            >
-              <MailIcon />
-              Email Us
+            {" "}or{" "}
+            <a href="mailto:hello@babmarrakech.ca" className="text-white/55 hover:text-gold transition-colors">
+              send us an email
             </a>
-          </div>
+          </p>
         </div>
       </section>
 
@@ -998,8 +1015,8 @@ export default function Home() {
                 Hours
               </h4>
               <ul className="space-y-3 text-sm text-white/60">
-                <li>Monday: Closed</li>
-                <li>Tue – Sun: 10 AM – 9 PM</li>
+                <li>Monday – Tuesday: Closed</li>
+                <li>Wed – Sun: 2:00 PM – 8:00 PM</li>
               </ul>
               <a
                 href="#reserve"
@@ -1013,14 +1030,6 @@ export default function Home() {
           {/* Bottom bar */}
           <div className="py-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/40">
             <p>&copy; {new Date().getFullYear()} Bab Marrakech. All rights reserved.</p>
-            <div className="flex items-center gap-6">
-              <a href="#" className="hover:text-gold transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-gold transition-colors">
-                Terms of Service
-              </a>
-            </div>
           </div>
         </div>
       </footer>
