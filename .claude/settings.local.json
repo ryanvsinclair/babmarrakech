@@ -4,7 +4,8 @@
       "Bash(node -e \"\nconst { createClient } = require(''''@supabase/supabase-js'''');\nconst url = ''''https://zfwhyqwrxzbtzaejemym.supabase.co'''';\n// Use service role key pattern - we need to check if supabase CLI is available\n\")",
       "Bash(npx supabase --version)",
       "Bash(npx supabase db push --db-url \"postgresql://postgres:postgres@db.zfwhyqwrxzbtzaejemym.supabase.co:5432/postgres\")",
-      "Bash(dir \"c:\\Users\\XFlor\\OneDrive\\Desktop\\babmarrakech\" /b)"
+      "Bash(dir \"c:\\Users\\XFlor\\OneDrive\\Desktop\\babmarrakech\" /b)",
+      "Bash(npx tsc *)"
     ],
     "deny": [],
     "ask": []

@@ -2,7 +2,24 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { supabase, type Reservation, type SiteNotice } from "@/lib/supabase";
+import { supabase, type Reservation, type SiteNotice, type MenuItem } from "@/lib/supabase";
+
+const TABLE_LABELS: Record<string, string> = {
+  t1: "Table 1 (5-top)",
+  t2: "Table 2 (4-top)",
+  t3: "Table 3 (4-top)",
+  t4: "Table 4 (2-top)",
+  t5: "Table 5 (2-top)",
+};
+
+const TABLE_OPTIONS = [
+  { value: "",   label: "No table assigned" },
+  { value: "t1", label: "Table 1 — 5 seats" },
+  { value: "t2", label: "Table 2 — 4 seats" },
+  { value: "t3", label: "Table 3 — 4 seats" },
+  { value: "t4", label: "Table 4 — 2 seats" },
+  { value: "t5", label: "Table 5 — 2 seats (walk-in)" },
+];
 
 const TIME_SLOTS = [
   "14:00","14:30","15:00","15:30",
@@ -27,7 +44,10 @@ function todayStr() {
   return new Date().toLocaleDateString("en-CA");
 }
 
-const EMPTY_FORM = { name: "", email: "", phone: "", party_size: "2", date: "", time: "", allergies: "", notes: "" };
+const EMPTY_FORM = {
+  name: "", email: "", phone: "", party_size: "2",
+  date: "", time: "", allergies: "", notes: "", table_assignment: "",
+};
 
 type EditForm = typeof EMPTY_FORM;
 
@@ -43,9 +63,10 @@ function EditCard({ r, onSave, onCancel }: {
     phone: r.phone,
     party_size: String(r.party_size),
     date: r.date,
-    time: r.time.slice(0, 5), // strip seconds
+    time: r.time.slice(0, 5),
     allergies: r.allergies ?? "",
     notes: r.notes ?? "",
+    table_assignment: r.table_assignment ?? "",
   });
   const [saving, setSaving] = useState(false);
   const upd = (k: keyof EditForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -62,6 +83,7 @@ function EditCard({ r, onSave, onCancel }: {
       time: f.time + ":00",
       allergies: f.allergies.trim() || null,
       notes: f.notes.trim() || null,
+      table_assignment: f.table_assignment || null,
     });
     setSaving(false);
   };
@@ -95,6 +117,11 @@ function EditCard({ r, onSave, onCancel }: {
           </select>
         </MField>
       </div>
+      <MField label="Table">
+        <select value={f.table_assignment} onChange={upd("table_assignment")} className="input-base text-sm">
+          {TABLE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      </MField>
       <MField label="Allergies">
         <input type="text" value={f.allergies} onChange={upd("allergies")} placeholder="None" className="input-base text-sm" />
       </MField>
@@ -120,8 +147,40 @@ function EditCard({ r, onSave, onCancel }: {
   );
 }
 
+/* ── Status badge ── */
+function StatusBadge({ status }: { status: string | null }) {
+  if (!status) return null;
+  if (status === "completed") {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        Attended
+      </span>
+    );
+  }
+  if (status === "cancelled") {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-600 text-xs font-semibold rounded-full">
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Cancelled
+      </span>
+    );
+  }
+  return null;
+}
+
 /* ── Reservation card ── */
-function ReservationCard({ r, showDate, onEdit, onDelete, confirmingDelete, onConfirmDelete, onCancelDelete }: {
+function ReservationCard({
+  r, showDate,
+  onEdit, onDelete,
+  confirmingDelete, onConfirmDelete, onCancelDelete,
+  onAttend,
+  confirmingCancel, onCancelBooking, onConfirmCancel, onCancelCancel,
+}: {
   r: Reservation;
   showDate?: boolean;
   onEdit: () => void;
@@ -129,9 +188,25 @@ function ReservationCard({ r, showDate, onEdit, onDelete, confirmingDelete, onCo
   confirmingDelete: boolean;
   onConfirmDelete: () => void;
   onCancelDelete: () => void;
+  onAttend: () => void;
+  confirmingCancel: boolean;
+  onCancelBooking: () => void;
+  onConfirmCancel: () => void;
+  onCancelCancel: () => void;
 }) {
+  const isActive = !r.status;
+  const isCancelled = r.status === "cancelled";
+  const isCompleted = r.status === "completed";
+  const showingConfirm = confirmingDelete || confirmingCancel;
+
   return (
-    <div className={`bg-white rounded-2xl border shadow-sm px-4 py-3.5 space-y-2 transition-colors ${confirmingDelete ? "border-red-200 bg-red-50/30" : "border-black/5"}`}>
+    <div className={`bg-white rounded-2xl border shadow-sm px-4 py-3.5 space-y-2 transition-colors ${
+      confirmingDelete ? "border-red-200 bg-red-50/30" :
+      confirmingCancel ? "border-amber-200 bg-amber-50/20" :
+      isCancelled ? "border-black/5 opacity-60" :
+      isCompleted ? "border-green-100" :
+      "border-black/5"
+    }`}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           {showDate && (
@@ -147,22 +222,49 @@ function ReservationCard({ r, showDate, onEdit, onDelete, confirmingDelete, onCo
             </svg>
             {r.party_size}
           </span>
-          {!confirmingDelete && (
+          {!showingConfirm && (
             <>
               <button onClick={onEdit} className="p-1.5 rounded-full text-text-light hover:text-gold hover:bg-gold/10 transition-colors" aria-label="Edit">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               </button>
-              <button onClick={onDelete} className="p-1.5 rounded-full text-text-light hover:text-red-500 hover:bg-red-50 transition-colors" aria-label="Delete">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
+              {isActive && (
+                <>
+                  <button onClick={onAttend} className="p-1.5 rounded-full text-text-light hover:text-green-600 hover:bg-green-50 transition-colors" aria-label="Mark attended">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+                  <button onClick={onCancelBooking} className="p-1.5 rounded-full text-text-light hover:text-amber-600 hover:bg-amber-50 transition-colors" aria-label="Cancel booking">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                    </svg>
+                  </button>
+                </>
+              )}
+              {!isActive && (
+                <button onClick={onDelete} className="p-1.5 rounded-full text-text-light hover:text-red-500 hover:bg-red-50 transition-colors" aria-label="Delete">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
             </>
           )}
         </div>
       </div>
+
+      {r.table_assignment && !showingConfirm && (
+        <div>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-brown-deep/10 text-brown-deep text-xs font-semibold rounded-full">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18M10 4v16M14 4v16" />
+            </svg>
+            {TABLE_LABELS[r.table_assignment] ?? r.table_assignment}
+          </span>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2 text-sm">
         <a href={`tel:${r.phone}`} className="inline-flex items-center gap-1.5 text-text-body hover:text-gold transition-colors">
@@ -181,8 +283,9 @@ function ReservationCard({ r, showDate, onEdit, onDelete, confirmingDelete, onCo
         )}
       </div>
 
-      {(r.allergies || r.notes) && !confirmingDelete && (
+      {(r.allergies || r.notes || r.status) && !showingConfirm && (
         <div className="flex flex-wrap gap-2">
+          <StatusBadge status={r.status} />
           {r.allergies && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-full text-xs font-medium">
               ⚠ {r.allergies}
@@ -191,6 +294,18 @@ function ReservationCard({ r, showDate, onEdit, onDelete, confirmingDelete, onCo
           {r.notes && (
             <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">{r.notes}</span>
           )}
+        </div>
+      )}
+
+      {confirmingCancel && (
+        <div className="flex items-center gap-2 pt-1">
+          <p className="text-sm text-amber-700 font-medium flex-1">Cancel this booking?</p>
+          <button onClick={onCancelCancel} className="px-3 py-1.5 text-xs font-semibold text-text-body border border-black/10 rounded-full hover:border-black/20 transition-all">
+            Keep
+          </button>
+          <button onClick={onConfirmCancel} className="px-3 py-1.5 text-xs font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-full transition-all">
+            Yes, Cancel
+          </button>
         </div>
       )}
 
@@ -255,6 +370,81 @@ export default function ManagerDashboard() {
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+
+  /* ── Menu items ── */
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [showAddItem, setShowAddItem] = useState(false);
+  const [newItem, setNewItem] = useState({ category: "tajine", name: "", price: "", description: "" });
+  const [newItemPhoto, setNewItemPhoto] = useState<File | null>(null);
+  const [addingItem, setAddingItem] = useState(false);
+
+  const fetchMenuItems = useCallback(async () => {
+    const { data } = await supabase.from("menu_items").select("*").order("category").order("sort_order");
+    if (data) setMenuItems(data as MenuItem[]);
+  }, []);
+
+  useEffect(() => { fetchMenuItems(); }, [fetchMenuItems]);
+
+  const toggleItem = async (id: string, available: boolean) => {
+    setMenuItems((prev) => prev.map((i) => i.id === id ? { ...i, available } : i));
+    await supabase.from("menu_items").update({ available }).eq("id", id);
+  };
+
+  const deleteMenuItem = async (id: string) => {
+    setMenuItems((prev) => prev.filter((i) => i.id !== id));
+    await supabase.from("menu_items").delete().eq("id", id);
+  };
+
+  const addMenuItem = async () => {
+    if (!newItem.name.trim() || !newItem.price.trim()) return;
+    setAddingItem(true);
+    let image_url: string | null = null;
+    if (newItemPhoto) {
+      const ext = newItemPhoto.name.split(".").pop();
+      const path = `${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("menu-photos").upload(path, newItemPhoto);
+      if (!upErr) {
+        const { data: urlData } = supabase.storage.from("menu-photos").getPublicUrl(path);
+        image_url = urlData.publicUrl;
+      }
+    }
+    await supabase.from("menu_items").insert([{
+      category: newItem.category,
+      name: newItem.name.trim(),
+      price: newItem.price.trim(),
+      description: newItem.description.trim() || null,
+      image_url,
+      available: true,
+    }]);
+    setNewItem({ category: "tajine", name: "", price: "", description: "" });
+    setNewItemPhoto(null);
+    setShowAddItem(false);
+    setAddingItem(false);
+    fetchMenuItems();
+  };
+
+  const CATEGORIES = [
+    { value: "tajine",    label: "Tajine" },
+    { value: "couscous",  label: "Couscous" },
+    { value: "bastilla",  label: "Bastilla" },
+    { value: "soups",     label: "Soup" },
+    { value: "entrees",   label: "Entrées" },
+    { value: "msemen",    label: "Msemen" },
+    { value: "desserts",  label: "Desserts" },
+    { value: "breakfast", label: "Breakfast" },
+    { value: "mkila",     label: "M'kila" },
+    { value: "rfissa",    label: "Rfissa" },
+    { value: "drinks",    label: "Drinks" },
+    { value: "tea",       label: "Tea" },
+  ];
+
+  const CATEGORY_LABEL: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) => [c.value, c.label]));
+
+  const groupedMenu = menuItems.reduce<Record<string, MenuItem[]>>((acc, item) => {
+    (acc[item.category] ??= []).push(item);
+    return acc;
+  }, {});
 
   const [notice, setNotice] = useState<SiteNotice>({ id: 1, message: "", active: false, updated_at: "" });
   const [noticeLoading, setNoticeLoading] = useState(false);
@@ -323,6 +513,13 @@ export default function ManagerDashboard() {
     fetchReservations();
   };
 
+  /* ── Status changes ── */
+  const handleSetStatus = async (id: string, status: "cancelled" | "completed" | null) => {
+    await supabase.from("reservations").update({ status }).eq("id", id);
+    setCancellingId(null);
+    fetchReservations();
+  };
+
   /* ── Add reservation ── */
   const set = (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -336,6 +533,7 @@ export default function ManagerDashboard() {
       name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(),
       party_size: parseInt(form.party_size), date: form.date, time: form.time + ":00",
       allergies: form.allergies.trim() || null, notes: form.notes.trim() || null,
+      table_assignment: form.table_assignment || null,
     }]);
     setFormLoading(false);
     if (dbErr) {
@@ -351,7 +549,14 @@ export default function ManagerDashboard() {
   /* ── Helpers ── */
   const today = todayStr();
   const todayRes = reservations.filter((r) => r.date === today);
-  const upcomingRes = reservations.filter((r) => r.date !== today);
+  const upcomingRes = reservations.filter((r) => r.date > today);
+  const pastRes = reservations.filter((r) => r.date < today);
+
+  function clearActions() {
+    setEditingId(null);
+    setDeletingId(null);
+    setCancellingId(null);
+  }
 
   function renderCard(r: Reservation, showDate?: boolean) {
     if (editingId === r.id) {
@@ -364,11 +569,16 @@ export default function ManagerDashboard() {
         key={r.id}
         r={r}
         showDate={showDate}
-        onEdit={() => { setDeletingId(null); setEditingId(r.id); }}
-        onDelete={() => { setEditingId(null); setDeletingId(r.id); }}
+        onEdit={() => { clearActions(); setEditingId(r.id); }}
+        onDelete={() => { clearActions(); setDeletingId(r.id); }}
         confirmingDelete={deletingId === r.id}
         onConfirmDelete={() => handleDelete(r.id)}
         onCancelDelete={() => setDeletingId(null)}
+        onAttend={() => handleSetStatus(r.id, "completed")}
+        confirmingCancel={cancellingId === r.id}
+        onCancelBooking={() => { clearActions(); setCancellingId(r.id); }}
+        onConfirmCancel={() => handleSetStatus(r.id, "cancelled")}
+        onCancelCancel={() => setCancellingId(null)}
       />
     );
   }
@@ -384,22 +594,13 @@ export default function ManagerDashboard() {
             <span className="text-white/30 text-sm">·</span>
             <span className="text-white/60 text-sm truncate">Manager</span>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <a href="/manager/tables"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white/60 hover:text-white border border-white/20 hover:border-white/40 rounded-full transition-all">
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-              </svg>
-              Tables
-            </a>
-            <button onClick={signOut}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white/60 hover:text-white border border-white/20 hover:border-white/40 rounded-full transition-all">
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Out
-            </button>
-          </div>
+          <button onClick={signOut}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white/60 hover:text-white border border-white/20 hover:border-white/40 rounded-full transition-all">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Out
+          </button>
         </div>
       </header>
 
@@ -450,6 +651,22 @@ export default function ManagerDashboard() {
           )}
         </section>
 
+        {/* ── Past ── */}
+        {!filterDate && (
+          <Accordion
+            title="Past Reservations"
+            subtitle={pastRes.length > 0 ? `${pastRes.length} booking${pastRes.length === 1 ? "" : "s"}` : "None"}
+          >
+            <div className="pt-3 space-y-2.5">
+              {pastRes.length === 0 ? (
+                <p className="text-sm text-text-light text-center py-4">No past reservations.</p>
+              ) : (
+                [...pastRes].reverse().map((r) => renderCard(r, true))
+              )}
+            </div>
+          </Accordion>
+        )}
+
         {/* ── Add Reservation ── */}
         <Accordion title="Add Reservation" subtitle="Walk-ins and phone bookings">
           <form onSubmit={handleManualSubmit} className="pt-4 space-y-4">
@@ -480,6 +697,11 @@ export default function ManagerDashboard() {
                 </select>
               </MField>
             </div>
+            <MField label="Table">
+              <select value={form.table_assignment} onChange={set("table_assignment")} className="input-base">
+                {TABLE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </MField>
             <MField label="Allergies (optional)">
               <input type="text" placeholder="e.g. nut allergy" value={form.allergies} onChange={set("allergies")} className="input-base" />
             </MField>
@@ -533,6 +755,86 @@ export default function ManagerDashboard() {
               </button>
               {noticeSaved && <p className="text-sm text-green-700 font-medium">✓ Saved</p>}
             </div>
+          </div>
+        </Accordion>
+
+        {/* ── Menu Items ── */}
+        <Accordion title="Menu Items" subtitle={`${menuItems.filter((i) => i.available).length} of ${menuItems.length} items available`}>
+          <div className="pt-4 space-y-5">
+
+            {Object.keys(groupedMenu).sort().map((cat) => (
+              <div key={cat}>
+                <p className="text-xs font-semibold uppercase tracking-wider text-gold-dark mb-2">
+                  {CATEGORY_LABEL[cat] ?? cat}
+                </p>
+                <div className="space-y-1.5">
+                  {groupedMenu[cat].map((item) => (
+                    <div key={item.id} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${item.available ? "bg-[#fffaf2]" : "bg-gray-50 opacity-60"}`}>
+                      {item.image_url && (
+                        <img src={item.image_url} alt={item.name} className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-text-dark truncate">{item.name}</p>
+                        <p className="text-xs text-text-light">{item.price}</p>
+                      </div>
+                      <button
+                        onClick={() => toggleItem(item.id, !item.available)}
+                        className={`relative inline-flex h-6 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${item.available ? "bg-gold" : "bg-gray-200"}`}
+                      >
+                        <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${item.available ? "translate-x-4" : "translate-x-0"}`} />
+                      </button>
+                      <button onClick={() => deleteMenuItem(item.id)} className="p-1 rounded-full text-text-light hover:text-red-500 hover:bg-red-50 transition-colors shrink-0">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {!showAddItem ? (
+              <button
+                onClick={() => setShowAddItem(true)}
+                className="w-full py-2.5 border-2 border-dashed border-gold/30 text-gold-dark text-sm font-medium rounded-xl hover:border-gold/60 hover:bg-gold/5 transition-all"
+              >
+                + Add Item
+              </button>
+            ) : (
+              <div className="rounded-xl border border-gold/20 bg-[#fffaf2] p-4 space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-gold-dark">New Item</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <MField label="Category">
+                    <select value={newItem.category} onChange={(e) => setNewItem((p) => ({ ...p, category: e.target.value }))} className="input-base text-sm">
+                      {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                    </select>
+                  </MField>
+                  <MField label="Price">
+                    <input type="text" placeholder="$25" value={newItem.price} onChange={(e) => setNewItem((p) => ({ ...p, price: e.target.value }))} className="input-base text-sm" />
+                  </MField>
+                </div>
+                <MField label="Name">
+                  <input type="text" placeholder="e.g. Lamb Shank" value={newItem.name} onChange={(e) => setNewItem((p) => ({ ...p, name: e.target.value }))} className="input-base text-sm" />
+                </MField>
+                <MField label="Description (optional)">
+                  <input type="text" placeholder="Short description…" value={newItem.description} onChange={(e) => setNewItem((p) => ({ ...p, description: e.target.value }))} className="input-base text-sm" />
+                </MField>
+                <MField label="Photo (optional)">
+                  <input type="file" accept="image/*" onChange={(e) => setNewItemPhoto(e.target.files?.[0] ?? null)} className="block w-full text-sm text-text-light file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold-dark hover:file:bg-gold/20 cursor-pointer" />
+                </MField>
+                <div className="flex gap-2 pt-1">
+                  <button onClick={addMenuItem} disabled={addingItem || !newItem.name.trim() || !newItem.price.trim()}
+                    className="flex-1 py-2.5 bg-gold text-white text-sm font-semibold rounded-full hover:bg-gold-light transition-all disabled:opacity-50">
+                    {addingItem ? "Adding…" : "Add to Menu"}
+                  </button>
+                  <button onClick={() => { setShowAddItem(false); setNewItem({ category: "tajine", name: "", price: "", description: "" }); setNewItemPhoto(null); }}
+                    className="px-4 py-2.5 text-sm font-semibold text-text-body border border-black/10 rounded-full hover:border-black/20 transition-all">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </Accordion>
 

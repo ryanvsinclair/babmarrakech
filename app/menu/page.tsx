@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { SiteHeader } from "../components/site-header";
-import { featuredItems, menuSections, availableNowSections, type MenuItem } from "./menu-data";
+import { featuredItems, menuSections, type MenuItem } from "./menu-data";
+import { AvailableNow } from "./available-now";
 
 export const metadata: Metadata = {
   title: "Menu | Bab Marrakech",
@@ -232,88 +233,10 @@ export default function MenuPage() {
         </div>
       </section>
 
-      {/* ── Available Now ── */}
+      {/* ── Available Now (dynamic) ── */}
       <section id="available-now" className="py-16 lg:py-20 bg-cream">
         <div className="mx-auto max-w-7xl px-6">
-
-          {/* Return date banner */}
-          <div className="mb-10 flex items-start gap-4 rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5">
-            <svg className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-            </svg>
-            <div>
-              <p className="font-semibold text-amber-900">Limited menu — returning Friday, April 1st</p>
-              <p className="mt-1 text-sm leading-6 text-amber-800">
-                Our soups, entrees, M&apos;kila dishes, Rfissa, Msemen, and breakfast plates will be back on{" "}
-                <strong>Friday, April 1st</strong>. Until then, we&apos;re serving our tajines, couscous, and bastillas below.
-              </p>
-            </div>
-          </div>
-
-          <div className="mb-10">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">
-              Available Now
-            </p>
-            <h2 className="mt-3 text-4xl text-text-dark sm:text-5xl">
-              What&apos;s on today.
-            </h2>
-          </div>
-
-          {/* Sticky sub-nav for available now */}
-          <div className="mb-8 flex flex-wrap gap-3">
-            {availableNowSections.map((section) => (
-              <a
-                key={section.id}
-                href={`#${section.id}`}
-                className="shrink-0 rounded-full border border-gold/25 bg-white px-4 py-2 text-sm font-medium text-text-body transition-colors hover:border-gold/50 hover:text-gold-dark"
-              >
-                {section.title}
-              </a>
-            ))}
-          </div>
-
-          <div className="grid gap-6 xl:grid-cols-2">
-            {availableNowSections.map((section) => (
-              <article
-                id={section.id}
-                key={section.id}
-                className="scroll-mt-36 rounded-[2rem] border border-gold/20 bg-white p-8 shadow-[0_24px_80px_-54px_rgba(45,24,16,0.4)] ring-1 ring-gold/10"
-              >
-                <div className="flex flex-col gap-4 border-b border-gold/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold-dark">
-                      {section.label}
-                    </p>
-                    <h3 className="mt-2 text-3xl text-text-dark">
-                      {section.title}
-                    </h3>
-                  </div>
-                  <p className="max-w-md text-sm leading-6 text-text-body">
-                    {section.description}
-                  </p>
-                </div>
-
-                <div className="mt-6 space-y-5">
-                  {section.items.map((item) => (
-                    <div
-                      key={`${section.id}-${item.name}`}
-                      className="rounded-[1.5rem] bg-[#fffaf2] px-5 py-4"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <h4 className="max-w-[70%] text-lg font-semibold text-text-dark">
-                          {item.name}
-                        </h4>
-                        <span className="shrink-0 text-lg font-semibold text-gold-dark">
-                          {item.price}
-                        </span>
-                      </div>
-                      {renderItemMeta(item)}
-                    </div>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
+          <AvailableNow />
         </div>
       </section>
 
