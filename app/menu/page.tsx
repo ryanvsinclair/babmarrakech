@@ -95,7 +95,7 @@ function renderItemMeta(item: MenuItem) {
 
 export default function MenuPage() {
   return (
-    <main className="min-h-screen bg-cream pt-20 text-text-dark">
+    <main className="min-h-screen bg-cream text-text-dark">
       <SiteHeader />
 
       {/* Hero */}
@@ -103,7 +103,7 @@ export default function MenuPage() {
         <div className="absolute inset-0 moroccan-pattern opacity-20" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,146,11,0.25),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.08),transparent_30%)]" />
 
-        <div className="relative mx-auto grid max-w-7xl gap-14 px-6 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
+        <div className="relative mx-auto grid max-w-7xl gap-14 px-6 pb-16 pt-36 lg:grid-cols-[1.1fr_0.9fr] lg:pb-24 lg:pt-44">
           <div className="max-w-2xl">
             <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-gold/30 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold">
               House Menu

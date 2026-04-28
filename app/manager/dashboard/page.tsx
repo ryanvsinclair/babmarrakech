@@ -373,6 +373,39 @@ export default function ManagerDashboard() {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   /* ── Menu items ── */
+  /* ── Large party codes ── */
+  type LargePartyCode = { id: string; code: string; used: boolean; created_at: string };
+  const [largeCodes, setLargeCodes] = useState<LargePartyCode[]>([]);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const fetchCodes = useCallback(async () => {
+    const { data } = await supabase
+      .from("large_party_codes")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (data) setLargeCodes(data as LargePartyCode[]);
+  }, []);
+
+  useEffect(() => { fetchCodes(); }, [fetchCodes]);
+
+  const generateCode = async () => {
+    const code = String(Math.floor(1000 + Math.random() * 9000));
+    await supabase.from("large_party_codes").insert([{ code }]);
+    fetchCodes();
+  };
+
+  const deleteCode = async (id: string) => {
+    await supabase.from("large_party_codes").delete().eq("id", id);
+    setLargeCodes((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  const copyCode = (id: string, code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  /* ── Menu items ── */
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [showAddItem, setShowAddItem] = useState(false);
   const [newItem, setNewItem] = useState({ category: "tajine", name: "", price: "", description: "" });
@@ -755,6 +788,69 @@ export default function ManagerDashboard() {
               </button>
               {noticeSaved && <p className="text-sm text-green-700 font-medium">✓ Saved</p>}
             </div>
+          </div>
+        </Accordion>
+
+        {/* ── Large Party Codes ── */}
+        <Accordion
+          title="Large Party Codes"
+          subtitle={`${largeCodes.filter((c) => !c.used).length} unused · ${largeCodes.filter((c) => c.used).length} used`}
+        >
+          <div className="pt-4 space-y-3">
+            <button
+              onClick={generateCode}
+              className="w-full py-2.5 bg-gold text-white text-sm font-semibold rounded-full hover:bg-gold-light transition-all shadow-md shadow-gold/20"
+            >
+              Generate New Code
+            </button>
+
+            {largeCodes.length === 0 ? (
+              <p className="text-sm text-text-light text-center py-3">No codes yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {largeCodes.map((c) => (
+                  <div
+                    key={c.id}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 ${c.used ? "bg-gray-50 opacity-60" : "bg-[#fffaf2]"}`}
+                  >
+                    <span className={`text-2xl font-bold tracking-[0.2em] tabular-nums flex-1 ${c.used ? "text-text-light line-through" : "text-text-dark"}`}>
+                      {c.code}
+                    </span>
+                    {c.used ? (
+                      <span className="text-xs font-semibold text-gray-400 px-2 py-0.5 bg-gray-100 rounded-full">Used</span>
+                    ) : (
+                      <span className="text-xs font-semibold text-green-700 px-2 py-0.5 bg-green-100 rounded-full">Active</span>
+                    )}
+                    {!c.used && (
+                      <button
+                        onClick={() => copyCode(c.id, c.code)}
+                        className="p-1.5 rounded-full text-text-light hover:text-gold hover:bg-gold/10 transition-colors"
+                        aria-label="Copy code"
+                      >
+                        {copiedId === c.id ? (
+                          <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => deleteCode(c.id)}
+                      className="p-1.5 rounded-full text-text-light hover:text-red-500 hover:bg-red-50 transition-colors"
+                      aria-label="Delete code"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </Accordion>
 
