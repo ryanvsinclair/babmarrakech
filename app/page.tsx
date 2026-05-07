@@ -12,11 +12,11 @@ import { supabase, type SiteNotice } from "@/lib/supabase";
 const HOURS = [
   { day: "Monday", time: "Closed", closed: true },
   { day: "Tuesday", time: "Closed", closed: true },
-  { day: "Wednesday", time: "2:00 PM – 8:00 PM" },
-  { day: "Thursday", time: "2:00 PM – 8:00 PM" },
-  { day: "Friday", time: "2:00 PM – 8:00 PM" },
-  { day: "Saturday", time: "2:00 PM – 8:00 PM" },
-  { day: "Sunday", time: "2:00 PM – 8:00 PM" },
+  { day: "Wednesday", time: "4:30 PM – 8:00 PM" },
+  { day: "Thursday", time: "4:30 PM – 8:00 PM" },
+  { day: "Friday", time: "4:30 PM – 8:00 PM" },
+  { day: "Saturday", time: "4:30 PM – 8:00 PM" },
+  { day: "Sunday", time: "4:30 PM – 8:00 PM" },
 ];
 
 const FALLBACK_REVIEWS = [
@@ -1016,7 +1016,7 @@ export default function Home() {
               </h4>
               <ul className="space-y-3 text-sm text-white/60">
                 <li>Monday – Tuesday: Closed</li>
-                <li>Wed – Sun: 2:00 PM – 8:00 PM</li>
+                <li>Wed – Sun: 4:30 PM – 8:00 PM</li>
               </ul>
               <a
                 href="#reserve"

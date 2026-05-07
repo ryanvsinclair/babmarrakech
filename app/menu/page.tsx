@@ -135,7 +135,7 @@ export default function MenuPage() {
             <div className="mt-10 flex flex-wrap gap-5 text-sm text-white/60">
               <span className="inline-flex items-center gap-2">
                 <ClockIcon />
-                Wed–Sun: 2:00 PM – 8:00 PM
+                Wed–Sun: 4:30 PM – 8:00 PM
               </span>
               <span className="inline-flex items-center gap-2">
                 <MapPinIcon />
@@ -342,7 +342,7 @@ export default function MenuPage() {
               Ready to dine? Book your table online.
             </h2>
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/65">
-              We&apos;re open Wednesday through Sunday, 2:00 PM to 8:00 PM. Reservations
+              We&apos;re open Wednesday through Sunday, 4:30 PM to 8:00 PM. Reservations
               are recommended — book your spot in seconds.
             </p>
           </div>
@@ -359,7 +359,7 @@ export default function MenuPage() {
               </p>
               <p className="flex items-center gap-3">
                 <ClockIcon />
-                Wednesday to Sunday, 2:00 PM to 8:00 PM
+                Wednesday to Sunday, 4:30 PM to 8:00 PM
               </p>
             </div>
 

@@ -19,10 +19,10 @@ const TABLES = [
 ] as const;
 
 const TURNOVER_MIN = 90;
+const LAST_BOOKING_DATE = "2026-05-10";
 
 const TIME_SLOTS = [
-  "14:00","14:30","15:00","15:30",
-  "16:00","16:30","17:00","17:30",
+  "16:30","17:00","17:30",
   "18:00","18:30","19:00",
 ];
 
@@ -44,6 +44,10 @@ function isClosedDay(dateStr: string) {
   if (!dateStr) return false;
   const day = new Date(dateStr + "T12:00:00").getDay();
   return day === 1 || day === 2;
+}
+
+function isPastLastDay(dateStr: string) {
+  return !!dateStr && dateStr > LAST_BOOKING_DATE;
 }
 
 function todayString() {
@@ -117,6 +121,7 @@ export default function ReservationsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [showClosingNotice, setShowClosingNotice] = useState(true);
 
   // Slot availability
   const [dateReservations, setDateReservations] = useState<SlotRes[]>([]);
@@ -206,6 +211,10 @@ export default function ReservationsPage() {
 
     if (isClosedDay(form.date)) {
       setError("We are closed on Mondays and Tuesdays. Please choose another date.");
+      return;
+    }
+    if (isPastLastDay(form.date)) {
+      setError("We are not accepting reservations after May 10th. Please call us at (343) 322-0322.");
       return;
     }
     if (!form.time) {
@@ -371,6 +380,30 @@ export default function ReservationsPage() {
   return (
     <>
       <SiteHeader />
+
+      {/* ── Closing notice popup ── */}
+      {showClosingNotice && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowClosingNotice(false)} />
+          <div className="relative w-full max-w-sm rounded-3xl border border-gold/30 bg-brown-deep p-7 text-center shadow-2xl">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold">Closing Soon</p>
+            <h2 className="mb-3 font-serif text-2xl text-white">Our Final Week</h2>
+            <p className="mb-6 text-sm leading-6 text-white/75">
+              Bab Marrakech will be closing its doors on{" "}
+              <strong className="text-white">May 11th</strong>. This is our
+              final week of service — we&apos;d love to see you one last time.
+              Book soon before tables fill up.
+            </p>
+            <button
+              onClick={() => setShowClosingNotice(false)}
+              className="w-full rounded-full bg-gold py-3 font-semibold text-white transition-all hover:bg-gold-light"
+            >
+              Book a Table
+            </button>
+          </div>
+        </div>
+      )}
+
       <main className="min-h-screen bg-cream pb-20">
         <section className="relative pb-16 pt-40 bg-brown-deep overflow-hidden">
           <div className="absolute inset-0 moroccan-pattern opacity-10" />
@@ -383,7 +416,7 @@ export default function ReservationsPage() {
             <h1 className="text-4xl sm:text-5xl font-serif text-white leading-tight mb-3">
               Book a <span className="text-gold-gradient">Table</span>
             </h1>
-            <p className="text-white/60 text-lg">Wednesday – Sunday &nbsp;·&nbsp; 2:00 PM – 8:00 PM</p>
+            <p className="text-white/60 text-lg">Wednesday – Sunday &nbsp;·&nbsp; 4:30 PM – 8:00 PM</p>
           </div>
         </section>
 
@@ -397,12 +430,16 @@ export default function ReservationsPage() {
                   type="date"
                   required
                   min={todayString()}
+                  max={LAST_BOOKING_DATE}
                   value={form.date}
                   onChange={set("date")}
-                  className={`input-base ${form.date && isClosedDay(form.date) ? "border-red-400 bg-red-50" : ""}`}
+                  className={`input-base ${form.date && (isClosedDay(form.date) || isPastLastDay(form.date)) ? "border-red-400 bg-red-50" : ""}`}
                 />
                 {form.date && isClosedDay(form.date) && (
                   <p className="text-red-500 text-xs mt-1">We are closed on Mondays &amp; Tuesdays.</p>
+                )}
+                {form.date && isPastLastDay(form.date) && (
+                  <p className="text-red-500 text-xs mt-1">We are not accepting reservations after May 10th.</p>
                 )}
               </Field>
 
@@ -592,7 +629,7 @@ export default function ReservationsPage() {
             {/* ── Submit ── */}
             <button
               type="submit"
-              disabled={loading || !form.date || !form.time || isClosedDay(form.date)}
+              disabled={loading || !form.date || !form.time || isClosedDay(form.date) || isPastLastDay(form.date)}
               className="w-full py-4 bg-gold text-white font-semibold rounded-full text-lg hover:bg-gold-light transition-all duration-300 hover:scale-[1.01] shadow-lg shadow-gold/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {loading ? "Reserving…" : "Confirm Reservation"}
