@@ -12,11 +12,11 @@ import { supabase, type SiteNotice } from "@/lib/supabase";
 const HOURS = [
   { day: "Monday", time: "Closed", closed: true },
   { day: "Tuesday", time: "Closed", closed: true },
-  { day: "Wednesday", time: "4:30 PM – 8:00 PM" },
-  { day: "Thursday", time: "4:30 PM – 8:00 PM" },
-  { day: "Friday", time: "4:30 PM – 8:00 PM" },
-  { day: "Saturday", time: "4:30 PM – 8:00 PM" },
-  { day: "Sunday", time: "4:30 PM – 8:00 PM" },
+  { day: "Wednesday", time: "Closed", closed: true },
+  { day: "Thursday", time: "Closed", closed: true },
+  { day: "Friday", time: "Closed", closed: true },
+  { day: "Saturday", time: "Closed", closed: true },
+  { day: "Sunday", time: "Closed", closed: true },
 ];
 
 const FALLBACK_REVIEWS = [
@@ -249,9 +249,9 @@ export default function Home() {
 
           {/* Quick info chips */}
           <div className="animate-fade-in-up opacity-0 delay-400 flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-10 text-sm text-white/70">
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2 text-gold font-semibold">
               <ClockIcon />
-              Wed–Sun: 2 PM – 8 PM
+              Permanently Closed
             </span>
             <span className="hidden sm:block w-1 h-1 rounded-full bg-gold" />
             <span className="flex items-center gap-2">
@@ -268,16 +268,16 @@ export default function Home() {
           {/* CTAs */}
           <div className="animate-fade-in-up opacity-0 delay-500 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="#reserve"
+              href="/menu"
               className="px-8 py-3.5 bg-gold text-white font-semibold rounded-full hover:bg-gold-light transition-all duration-300 hover:scale-105 shadow-xl shadow-gold/30 text-base"
             >
-              Reserve a Table
+              View Our Menu
             </a>
             <a
-              href="/menu"
+              href="/#about"
               className="px-8 py-3.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-gold hover:text-gold transition-all duration-300 text-base"
             >
-              View Menu
+              Our Story
             </a>
           </div>
         </div>
@@ -525,11 +525,11 @@ export default function Home() {
               <div className="flex items-center gap-3 mb-4">
                 <ClockIcon />
                 <span className="text-gold text-xs font-semibold tracking-[0.25em] uppercase">
-                  Opening Hours
+                  Hours
                 </span>
               </div>
               <h2 className="text-4xl lg:text-5xl font-serif text-text-dark leading-tight mb-10">
-                Visit Us <span className="text-gold-gradient">Today</span>
+                Currently <span className="text-gold-gradient">Closed</span>
               </h2>
 
               <div className="space-y-1">
@@ -854,7 +854,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ────────── RESERVATION CTA ────────── */}
+      {/* ────────── FAREWELL ────────── */}
       <section
         id="reserve"
         className="py-24 lg:py-32 bg-brown-deep relative overflow-hidden"
@@ -866,38 +866,29 @@ export default function Home() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <span className="w-10 h-0.5 bg-gold" />
             <span className="text-gold text-xs font-semibold tracking-[0.25em] uppercase">
-              Reserve Your Table
+              A Heartfelt Farewell
             </span>
             <span className="w-10 h-0.5 bg-gold" />
           </div>
           <h2 className="text-4xl lg:text-5xl font-serif text-white leading-tight mb-6">
-            Experience the Magic of{" "}
-            <span className="text-gold-gradient">Morocco</span>
+            Thank You,{" "}
+            <span className="text-gold-gradient">Ottawa</span>
           </h2>
-          <p className="text-white/60 text-lg max-w-xl mx-auto mb-10">
-            Book your table and let us take you on a culinary journey through
-            the vibrant streets of Marrakech
+          <p className="text-white/70 text-lg max-w-xl mx-auto mb-6 leading-relaxed">
+            We have had the honour of sharing the warmth and flavours of Morocco with this incredible city. Bab Marrakech is now closed, and we carry with us nothing but gratitude and beautiful memories.
+          </p>
+          <p className="text-white/50 text-base max-w-lg mx-auto mb-10 leading-relaxed">
+            This may not be the end of our story — we are exploring the possibility of bringing our Moroccan hospitality to a new city in the near future. Stay tuned.
           </p>
 
-          <a
-            href="/reservations"
-            className="inline-flex items-center gap-3 px-10 py-4 bg-gold text-white font-semibold rounded-full text-lg hover:bg-gold-light transition-all duration-300 hover:scale-105 shadow-xl shadow-gold/30 mb-6"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            Book a Table
-          </a>
+          <div className="flex items-center justify-center gap-2 text-gold mb-4">
+            <HeartIcon />
+            <HeartIcon />
+            <HeartIcon />
+          </div>
 
-          <p className="text-white/35 text-sm">
-            Have a question?{" "}
-            <a href="tel:3433220322" className="text-white/55 hover:text-gold transition-colors">
-              Call us
-            </a>
-            {" "}or{" "}
-            <a href="mailto:hello@babmarrakech.ca" className="text-white/55 hover:text-gold transition-colors">
-              send us an email
-            </a>
+          <p className="text-white/35 text-sm italic font-serif">
+            &ldquo;The aroma of spices will always guide you home.&rdquo;
           </p>
         </div>
       </section>
@@ -1009,21 +1000,15 @@ export default function Home() {
               </ul>
             </div>
 
-            {/* Hours summary */}
+            {/* Status */}
             <div>
               <h4 className="text-gold text-xs font-semibold tracking-wider uppercase mb-6">
-                Hours
+                Status
               </h4>
               <ul className="space-y-3 text-sm text-white/60">
-                <li>Monday – Tuesday: Closed</li>
-                <li>Wed – Sun: 4:30 PM – 8:00 PM</li>
+                <li className="text-gold font-semibold">Permanently Closed</li>
+                <li className="leading-relaxed">Thank you for the incredible years. We may return in a new city soon.</li>
               </ul>
-              <a
-                href="#reserve"
-                className="mt-6 inline-flex px-6 py-2.5 bg-gold text-white text-sm font-semibold rounded-full hover:bg-gold-light transition-all duration-300"
-              >
-                Book a Table
-              </a>
             </div>
           </div>
 

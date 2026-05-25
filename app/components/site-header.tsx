@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { siteNavLinks, sitePhone, siteReservation } from "../navigation";
+import { siteNavLinks, sitePhone } from "../navigation";
 
 type SiteHeaderProps = {
   transparentOnTop?: boolean;
@@ -117,12 +117,9 @@ export function SiteHeader({
             <PhoneIcon />
             {sitePhone.label}
           </a>
-          <Link
-            href={siteReservation.href}
-            className="rounded-full bg-gold px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-gold/30 transition-all duration-300 hover:scale-105 hover:bg-gold-light"
-          >
-            {siteReservation.label}
-          </Link>
+          <span className="rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-white/50 cursor-default">
+            Now Closed
+          </span>
         </div>
 
         <button
@@ -154,13 +151,9 @@ export function SiteHeader({
               <PhoneIcon />
               {sitePhone.label}
             </a>
-            <Link
-              href={siteReservation.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="mt-2 rounded-full bg-gold px-6 py-3 text-center font-semibold text-white transition-all hover:bg-gold-light"
-            >
-              {siteReservation.label}
-            </Link>
+            <div className="mt-2 rounded-full border border-white/20 px-6 py-3 text-center font-semibold text-white/50 cursor-default">
+              Now Closed
+            </div>
           </div>
         </div>
       ) : null}

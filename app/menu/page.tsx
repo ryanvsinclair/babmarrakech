@@ -133,9 +133,9 @@ export default function MenuPage() {
             </div>
 
             <div className="mt-10 flex flex-wrap gap-5 text-sm text-white/60">
-              <span className="inline-flex items-center gap-2">
+              <span className="inline-flex items-center gap-2 text-gold font-semibold">
                 <ClockIcon />
-                Wed–Sun: 4:30 PM – 8:00 PM
+                Permanently Closed
               </span>
               <span className="inline-flex items-center gap-2">
                 <MapPinIcon />
@@ -333,51 +333,23 @@ export default function MenuPage() {
         <div className="absolute inset-0 moroccan-pattern opacity-10" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,146,11,0.14),transparent_40%)]" />
 
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold">
-              Reserve a Table
-            </p>
-            <h2 className="mt-3 max-w-2xl text-4xl leading-tight sm:text-5xl">
-              Ready to dine? Book your table online.
-            </h2>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-white/65">
-              We&apos;re open Wednesday through Sunday, 4:30 PM to 8:00 PM. Reservations
-              are recommended — book your spot in seconds.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8">
-            <div className="space-y-4 text-sm text-white/70">
-              <p className="flex items-center gap-3">
-                <PhoneIcon />
-                (343) 322-0322
-              </p>
-              <p className="flex items-center gap-3">
-                <MapPinIcon />
-                2182 Lamira St, Ottawa, ON K1H 8L4
-              </p>
-              <p className="flex items-center gap-3">
-                <ClockIcon />
-                Wednesday to Sunday, 4:30 PM to 8:00 PM
-              </p>
-            </div>
-
-            <div className="mt-8 flex flex-col gap-4">
-              <Link
-                href="/reservations"
-                className="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3 font-semibold text-white transition-colors hover:bg-gold-light"
-              >
-                Book a Table
-              </Link>
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 font-semibold text-white transition-colors hover:border-gold hover:text-gold"
-              >
-                Back to Homepage
-              </Link>
-            </div>
-          </div>
+        <div className="relative mx-auto max-w-3xl px-6 text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold mb-4">
+            A Heartfelt Farewell
+          </p>
+          <h2 className="max-w-2xl mx-auto text-4xl leading-tight sm:text-5xl mb-6">
+            Thank you, Ottawa.
+          </h2>
+          <p className="max-w-xl mx-auto text-base leading-7 text-white/65 mb-10">
+            We have enjoyed every meal shared and every guest welcomed through our doors.
+            Bab Marrakech is now closed, but we may be returning in a new city soon.
+          </p>
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center rounded-full border border-white/20 px-8 py-3 font-semibold text-white transition-colors hover:border-gold hover:text-gold"
+          >
+            Back to Homepage
+          </Link>
         </div>
       </section>
     </main>
