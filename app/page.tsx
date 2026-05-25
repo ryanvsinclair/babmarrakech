@@ -131,6 +131,7 @@ function getTodayName() {
 export default function Home() {
   const [notice, setNotice] = useState<SiteNotice | null>(null);
   const [noticeDismissed, setNoticeDismissed] = useState(false);
+  const [showFarewell, setShowFarewell] = useState(false);
 
   useEffect(() => {
     supabase.from("site_notices").select("*").eq("id", 1).eq("active", true).single().then(({ data }) => {
@@ -178,6 +179,50 @@ export default function Home() {
 
   return (
     <>
+      {/* ────────── FAREWELL POPUP ────────── */}
+      {showFarewell && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center px-4 animate-fade-in" onClick={() => setShowFarewell(false)}>
+          <div className="absolute inset-0 bg-black/55 backdrop-blur-md" />
+          <div
+            className="relative w-full max-w-md rounded-3xl border border-white/15 bg-brown-deep shadow-[0_32px_80px_rgba(0,0,0,0.6)] overflow-hidden animate-fade-in-scale"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="absolute inset-0 moroccan-pattern opacity-10" />
+            <div className="relative px-8 pt-8 pb-7 flex flex-col items-center text-center">
+              <div className="flex items-center gap-2 text-gold mb-5">
+                <HeartIcon />
+                <HeartIcon />
+                <HeartIcon />
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="w-8 h-px bg-gold" />
+                <span className="text-gold text-[10px] font-semibold tracking-[0.28em] uppercase">A Heartfelt Farewell</span>
+                <span className="w-8 h-px bg-gold" />
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-serif text-white mb-5 leading-tight">
+                Thank You,{" "}
+                <span className="text-gold-gradient">Ottawa</span>
+              </h2>
+              <p className="text-white/70 text-sm sm:text-base leading-7 mb-4">
+                We have had the honour of sharing the warmth and flavours of Morocco with this incredible city. Bab Marrakech is now closed, and we carry with us nothing but gratitude and beautiful memories.
+              </p>
+              <p className="text-white/45 text-sm leading-6 mb-7">
+                This may not be the end of our story — we are exploring the possibility of bringing our Moroccan hospitality to a new city in the near future. Stay tuned.
+              </p>
+              <p className="text-white/25 text-sm italic font-serif mb-7">
+                &ldquo;The aroma of spices will always guide you home.&rdquo;
+              </p>
+              <button
+                onClick={() => setShowFarewell(false)}
+                className="w-full py-3.5 bg-gold hover:bg-gold-light text-white font-semibold rounded-full transition-all duration-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ────────── SITE NOTICE POPUP ────────── */}
       {notice && !noticeDismissed && (
         <div className="fixed inset-0 z-60 flex items-center justify-center px-4" onClick={() => setNoticeDismissed(true)}>
@@ -266,19 +311,30 @@ export default function Home() {
           </div>
 
           {/* CTAs */}
-          <div className="animate-fade-in-up opacity-0 delay-500 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="/menu"
-              className="px-8 py-3.5 bg-gold text-white font-semibold rounded-full hover:bg-gold-light transition-all duration-300 hover:scale-105 shadow-xl shadow-gold/30 text-base"
+          <div className="animate-fade-in-up opacity-0 delay-500 flex flex-col items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
+                href="/menu"
+                className="px-8 py-3.5 bg-gold text-white font-semibold rounded-full hover:bg-gold-light transition-all duration-300 hover:scale-105 shadow-xl shadow-gold/30 text-base"
+              >
+                View Our Menu
+              </a>
+              <a
+                href="/#about"
+                className="px-8 py-3.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-gold hover:text-gold transition-all duration-300 text-base"
+              >
+                Our Story
+              </a>
+            </div>
+            <button
+              onClick={() => setShowFarewell(true)}
+              className="flex items-center gap-2.5 px-6 py-3 rounded-full border border-white/20 hover:border-gold/60 text-white/65 hover:text-gold text-base font-medium transition-all duration-300 group backdrop-blur-sm"
             >
-              View Our Menu
-            </a>
-            <a
-              href="/#about"
-              className="px-8 py-3.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-gold hover:text-gold transition-all duration-300 text-base"
-            >
-              Our Story
-            </a>
+              <svg className="w-4 h-4 text-gold/70 group-hover:text-gold transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+              </svg>
+              A message to Ottawa
+            </button>
           </div>
         </div>
 
@@ -851,45 +907,6 @@ export default function Home() {
               </svg>
             </a>
           </div>
-        </div>
-      </section>
-
-      {/* ────────── FAREWELL ────────── */}
-      <section
-        id="reserve"
-        className="py-24 lg:py-32 bg-brown-deep relative overflow-hidden"
-      >
-        <div className="absolute inset-0 moroccan-pattern opacity-10" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gold/5 rounded-full blur-3xl -translate-y-1/2" />
-
-        <div className="relative max-w-3xl mx-auto px-6 text-center">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <span className="w-10 h-0.5 bg-gold" />
-            <span className="text-gold text-xs font-semibold tracking-[0.25em] uppercase">
-              A Heartfelt Farewell
-            </span>
-            <span className="w-10 h-0.5 bg-gold" />
-          </div>
-          <h2 className="text-4xl lg:text-5xl font-serif text-white leading-tight mb-6">
-            Thank You,{" "}
-            <span className="text-gold-gradient">Ottawa</span>
-          </h2>
-          <p className="text-white/70 text-lg max-w-xl mx-auto mb-6 leading-relaxed">
-            We have had the honour of sharing the warmth and flavours of Morocco with this incredible city. Bab Marrakech is now closed, and we carry with us nothing but gratitude and beautiful memories.
-          </p>
-          <p className="text-white/50 text-base max-w-lg mx-auto mb-10 leading-relaxed">
-            This may not be the end of our story — we are exploring the possibility of bringing our Moroccan hospitality to a new city in the near future. Stay tuned.
-          </p>
-
-          <div className="flex items-center justify-center gap-2 text-gold mb-4">
-            <HeartIcon />
-            <HeartIcon />
-            <HeartIcon />
-          </div>
-
-          <p className="text-white/35 text-sm italic font-serif">
-            &ldquo;The aroma of spices will always guide you home.&rdquo;
-          </p>
         </div>
       </section>
 
