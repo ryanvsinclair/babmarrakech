@@ -215,7 +215,7 @@ export default function TablesPage() {
 
     /* SELECT */
     if (tool === "select") {
-      // seats (small — check first so they're on top)
+      // seats (small, check first so they're on top)
       for (const s of [...seats].reverse()) {
         if (dist(pt.x, pt.y, s.x, s.y) <= SEAT_R + 4) {
           setSelected({ kind: "seat", id: s.id });

@@ -38,7 +38,7 @@ const FALLBACK_REVIEWS = [
     name: "Ahmed El-Fassi",
     date: "3 weeks ago",
     rating: 5,
-    text: "As a Moroccan expat, finding authentic food is always a challenge. Bab Marrakech exceeded my expectations — the flavors reminded me of home. The mint tea ceremony is a must-try!",
+    text: "As a Moroccan expat, finding authentic food is always a challenge. Bab Marrakech exceeded my expectations. The flavors reminded me of home. The mint tea ceremony is a must-try!",
     source: "google",
   },
   {
@@ -59,7 +59,7 @@ const FALLBACK_REVIEWS = [
     name: "Charlotte Dubois",
     date: "2 months ago",
     rating: 5,
-    text: "Found this gem through OpenTable and so glad we did! The food was extraordinary — every bite was an explosion of authentic Moroccan spices. The service was attentive without being overbearing. Already made our next reservation!",
+    text: "Found this gem through OpenTable and so glad we did! The food was extraordinary. Every bite was an explosion of authentic Moroccan spices. The service was attentive without being overbearing. Already made our next reservation!",
     source: "google",
   },
 ];
@@ -207,10 +207,15 @@ export default function Home() {
                 We have had the honour of sharing the warmth and flavours of Morocco with this incredible city. Bab Marrakech is now closed, and we carry with us nothing but gratitude and beautiful memories.
               </p>
               <p className="text-white/45 text-sm leading-6 mb-7">
-                This may not be the end of our story — we are exploring the possibility of bringing our Moroccan hospitality to a new city in the near future. Stay tuned.
+                This may not be the end of our story. We are exploring the possibility of bringing our Moroccan hospitality to a new city in the near future. Stay tuned.
               </p>
-              <p className="text-white/25 text-sm italic font-serif mb-7">
+              <p className="text-white/25 text-sm italic font-serif mb-4">
                 &ldquo;The aroma of spices will always guide you home.&rdquo;
+              </p>
+              <p className="text-gold/80 text-sm font-serif mb-7">
+                With love and gratitude,
+                <br />
+                Mehdi, Owner, and Chef Hasna
               </p>
               <button
                 onClick={() => setShowFarewell(false)}
@@ -408,8 +413,8 @@ export default function Home() {
                 </p>
                 <p>
                   Every dish is crafted with time-honored recipes passed down
-                  through generations, using the finest spices — cumin, saffron,
-                  cinnamon, and preserved lemons — that define Moroccan cuisine.
+                  through generations, using the finest spices that define
+                  Moroccan cuisine: cumin, saffron, cinnamon, and preserved lemons.
                   From our slow-cooked tagines to our fluffy couscous, each plate
                   tells a story of tradition and passion.
                 </p>

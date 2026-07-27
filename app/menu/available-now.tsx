@@ -52,7 +52,7 @@ export function AvailableNow() {
   const categories = Object.keys(grouped);
 
   if (categories.length === 0) return (
-    <div className="text-center text-text-light py-12 text-sm">Check back soon — menu coming shortly.</div>
+    <div className="text-center text-text-light py-12 text-sm">Check back soon. Menu coming shortly.</div>
   );
 
   return (
@@ -63,7 +63,7 @@ export function AvailableNow() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
         </svg>
         <div>
-          <p className="font-semibold text-amber-900">Limited menu — returning Friday, April 1st</p>
+          <p className="font-semibold text-amber-900">Limited menu, returning Friday, April 1st</p>
           <p className="mt-1 text-sm leading-6 text-amber-800">
             Our soups, entrees, M&apos;kila dishes, Rfissa, Msemen, and breakfast plates will be back on{" "}
             <strong>Friday, April 1st</strong>. Until then, we&apos;re serving the items below.

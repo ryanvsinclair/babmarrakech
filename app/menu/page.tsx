@@ -9,7 +9,7 @@ import { AvailableNow } from "./available-now";
 export const metadata: Metadata = {
   title: "Menu | Bab Marrakech",
   description:
-    "Browse the Bab Marrakech menu — tajines, couscous, bastilla, breakfast plates, tea, and more.",
+    "Browse the Bab Marrakech menu: tajines, couscous, bastilla, breakfast plates, tea, and more.",
 };
 
 function PhoneIcon() {
@@ -109,11 +109,11 @@ export default function MenuPage() {
               House Menu
             </div>
             <h1 className="max-w-xl text-5xl leading-tight text-white sm:text-6xl lg:text-7xl">
-              Bab Marrakech — the full menu.
+              Bab Marrakech: the full menu.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-white/70">
               Tajines, couscous, bastilla, breakfast plates, tea service, and
-              drinks. Limited selection available now — full menu returns
+              drinks. Limited selection available now. The full menu returns
               Friday, April 1st.
             </p>
 
@@ -190,7 +190,7 @@ export default function MenuPage() {
               </h2>
             </div>
             <p className="max-w-2xl text-base leading-7 text-text-body">
-              Three dishes that define what we do — crispy bastilla, slow-cooked
+              Three dishes that define what we do: crispy bastilla, slow-cooked
               tajine, and our beloved khlea skillet.
             </p>
           </div>
@@ -267,8 +267,8 @@ export default function MenuPage() {
               </h2>
             </div>
             <p className="max-w-2xl text-base leading-7 text-text-body">
-              Our complete menu — soups, entrees, M&apos;kila dishes, Rfissa, Msemen,
-              breakfast, and more — will be available again from April 1st.
+              Our complete menu of soups, entrees, M&apos;kila dishes, Rfissa, Msemen,
+              breakfast, and more will be available again from April 1st.
             </p>
           </div>
 

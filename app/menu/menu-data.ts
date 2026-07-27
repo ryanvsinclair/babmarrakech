@@ -33,7 +33,7 @@ export const featuredItems: FeaturedItem[] = [
     name: "Lamb Shank Tajine",
     price: "$30",
     description:
-      "Slow-braised lamb shank in a rich, spiced broth — cooked low and slow in a traditional earthenware pot until fall-off-the-bone tender.",
+      "Slow-braised lamb shank in a rich, spiced broth, cooked low and slow in a traditional earthenware pot until fall-off-the-bone tender.",
     image: "/images/lamb tajine.jpeg",
   },
   {

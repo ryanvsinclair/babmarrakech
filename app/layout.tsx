@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Bab Marrakech — Authentic Moroccan Cuisine in Ottawa",
+  title: "Bab Marrakech | Authentic Moroccan Cuisine in Ottawa",
   description:
     "Experience the warmth of Morocco in the heart of Ottawa. Authentic tagines, couscous, and the rich flavors of North Africa at Bab Marrakech.",
   keywords: [
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     "North African cuisine",
   ],
   openGraph: {
-    title: "Bab Marrakech — Authentic Moroccan Cuisine in Ottawa",
+    title: "Bab Marrakech | Authentic Moroccan Cuisine in Ottawa",
     description:
       "Where the warmth of Morocco meets the heart of Ottawa. Experience authentic tagines, couscous, and rich North African flavors.",
     type: "website",

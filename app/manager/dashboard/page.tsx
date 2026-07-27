@@ -14,11 +14,11 @@ const TABLE_LABELS: Record<string, string> = {
 
 const TABLE_OPTIONS = [
   { value: "",   label: "No table assigned" },
-  { value: "t1", label: "Table 1 — 5 seats" },
-  { value: "t2", label: "Table 2 — 4 seats" },
-  { value: "t3", label: "Table 3 — 4 seats" },
-  { value: "t4", label: "Table 4 — 2 seats" },
-  { value: "t5", label: "Table 5 — 2 seats (walk-in)" },
+  { value: "t1", label: "Table 1 (5 seats)" },
+  { value: "t2", label: "Table 2 (4 seats)" },
+  { value: "t3", label: "Table 3 (4 seats)" },
+  { value: "t4", label: "Table 4 (2 seats)" },
+  { value: "t5", label: "Table 5 (2 seats, walk-in)" },
 ];
 
 const TIME_SLOTS = [
@@ -27,7 +27,7 @@ const TIME_SLOTS = [
 ];
 
 function formatTime(t: string) {
-  if (!t) return "—";
+  if (!t) return "-";
   const [h, m] = t.split(":").map(Number);
   const suffix = h >= 12 ? "PM" : "AM";
   return `${h > 12 ? h - 12 : h}:${m.toString().padStart(2, "0")} ${suffix}`;
@@ -769,7 +769,7 @@ export default function ManagerDashboard() {
                 <svg className="h-4 w-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
-                Banner is live — visitors can see this message now.
+                Banner is live. Visitors can see this message now.
               </div>
             )}
             <MField label="Message">

@@ -29,7 +29,7 @@ export default function ReservationsPage() {
           </p>
           <p className="text-text-body leading-relaxed mb-10">
             We are exploring the possibility of bringing our Moroccan hospitality
-            to a new city in the near future. Thank you, Ottawa — from the bottom
+            to a new city in the near future. Thank you, Ottawa, from the bottom
             of our hearts.
           </p>
 
